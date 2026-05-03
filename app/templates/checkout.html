@@ -70,7 +70,7 @@
             Delivery Location
           </div>
           <p style="font-size:.82rem;color:var(--muted);margin:0 0 12px;">
-            Drop a pin on the map to confirm the exact delivery area for this order.
+            Open the map, search your address, and drop the pin for the exact delivery point.
           </p>
           <div style="border:1px solid var(--border);overflow:hidden;background:var(--white);margin-bottom:14px;">
             <iframe
@@ -83,16 +83,9 @@
               referrerpolicy="no-referrer-when-downgrade">
             </iframe>
           </div>
-          <div class="row g-3">
-            <div class="col-sm-6">
-              <label class="form-label" for="c-delivery-lat">Latitude</label>
-              <input type="text" id="c-delivery-lat" name="delivery_lat" class="form-control" placeholder="14.5995">
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label" for="c-delivery-lng">Longitude</label>
-              <input type="text" id="c-delivery-lng" name="delivery_lng" class="form-control" placeholder="120.9842">
-            </div>
-          </div>
+          <a href="https://www.google.com/maps?q=14.5995,120.9842&z=16" target="_blank" rel="noopener noreferrer" class="btn-outline-ink w-100 text-center d-block" style="padding:12px 16px;">
+            Open Full Map to Select Location
+          </a>
         </div>
 
         <div style="margin-bottom:32px;">
