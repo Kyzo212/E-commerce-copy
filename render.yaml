@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: shoplocal
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app/init_db.py && gunicorn --bind 0.0.0.0:$PORT --chdir app app:app
+    autoDeploy: true
