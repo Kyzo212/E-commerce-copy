@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Admin Order #{{ order.order_id }} — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:48px;padding-bottom:72px;max-width:860px;">
+  <nav aria-label="Breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/admin/orders/">Admin Orders</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Order #{{ order.order_id }}</li>
+    </ol>
+  </nav>
+
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4 pb-3" style="border-bottom:1px solid var(--border);">
+    <div>
+      <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.8rem;color:var(--ink);margin-bottom:6px;">
+        Order #{{ order.order_id }}
+      </h1>
+      {% if order.user %}
+      <p style="font-size:.85rem;color:var(--muted);margin:0;">
+        Customer: <strong style="color:var(--ink);">{{ order.user.username }}</strong> · {{ order.user.email }}
+      </p>
+      {% endif %}
+      {% if order.created_at %}
+      <p style="font-size:.78rem;color:var(--muted-2);margin:4px 0 0;">
+        Placed on {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+      </p>
+      {% endif %}
+    </div>
+
+    <div class="d-flex flex-column align-items-end gap-2">
+      {% if order.status == 'pending' %}
+      <div style="font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#7a6000;background:#fff8e1;border:1px solid #ffe082;padding:6px 14px;display:inline-block;">
+        {{ order.status|capitalize }}
+      </div>
+      {% elif order.status == 'processing' %}
+      <div style="font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;padding:6px 14px;display:inline-block;">
+        {{ order.status|capitalize }}
+      </div>
+      {% elif order.status == 'completed' %}
+      <div style="font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--success);background:#f0faf4;border:1px solid #a7d7b8;padding:6px 14px;display:inline-block;">
+        {{ order.status|capitalize }}
+      </div>
+      {% else %}
+      <div style="font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:6px 14px;display:inline-block;">
+        {{ order.status|capitalize }}
+      </div>
+      {% endif %}
+
+      <form method="post" action="/admin/orders/{{ order.order_id }}/status/" class="d-flex gap-2 flex-wrap" style="justify-content:flex-end;">
+        <select name="status" class="form-select" style="min-width:160px;">
+          <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>Processing</option>
+          <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>Completed</option>
+          <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+        <button type="submit" class="btn-ink" style="padding:10px 18px;">Update Status</button>
+      </form>
+    </div>
+  </div>
+
+  <div style="border:1px solid var(--border);margin-bottom:24px;background:var(--white);">
+    <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px;">
+      <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);">
+        <i class="bi bi-bag me-2" aria-hidden="true"></i>Items
+      </span>
+    </div>
+    <div>
+      {% for item in order.items %}
+      {% if not loop.last %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);">
+      {% else %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;">
+      {% endif %}
+        <div>
+          <div style="font-size:.9rem;font-weight:500;color:var(--ink);">{{ item.product_name }}</div>
+          <div style="font-size:.78rem;color:var(--muted);">&#8369;{{ item.product_price|price }} × {{ item.quantity }}</div>
+        </div>
+        <div style="font-weight:700;font-size:.9rem;color:var(--ink);">
+          &#8369;{{ (item.product_price * item.quantity)|price }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div style="border:1px solid var(--border);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;background:var(--white);margin-bottom:32px;">
+    <span style="font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);">Order Total</span>
+    <span style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.4rem;color:var(--ink);">&#8369;{{ order.total|price }}</span>
+  </div>
+
+  <div class="d-flex gap-3 flex-wrap">
+    <a href="/admin/orders/" class="btn-outline-ink">Back to Orders</a>
+    <a href="/admin/users/" class="btn-outline-ink">Manage Users</a>
+  </div>
+</div>
+{% endblock %}

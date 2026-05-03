@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Admin Users — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:48px;padding-bottom:72px;max-width:1100px;">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div>
+      <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.9rem;color:var(--ink);margin-bottom:6px;">
+        Manage User Accounts
+      </h1>
+      <p style="font-size:.85rem;color:var(--muted);margin:0;">View accounts, approve seller requests, and deactivate users when needed.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="/admin/orders/" class="btn-outline-ink">View Orders</a>
+      <a href="/products/" class="btn-ink">View Shop</a>
+    </div>
+  </div>
+
+  {% if users %}
+  <div style="border:1px solid var(--border);background:var(--white);overflow:hidden;">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Seller</th>
+          <th>Joined</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td style="font-weight:600;">{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role|capitalize }}</td>
+          <td>
+            {% if user.is_active %}
+              <span style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--success);background:#f0faf4;border:1px solid #a7d7b8;padding:3px 10px;display:inline-block;">Active</span>
+            {% else %}
+              <span style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--danger);background:#fdf2f2;border:1px solid #f5c6c6;padding:3px 10px;display:inline-block;">Deactivated</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if user.seller_status == 'approved' %}
+              <span style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--success);background:#f0faf4;border:1px solid #a7d7b8;padding:3px 10px;display:inline-block;">Approved</span>
+            {% elif user.seller_status == 'pending' %}
+              <span style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8a5a00;background:#fff8e6;border:1px solid #f0d28a;padding:3px 10px;display:inline-block;">Pending</span>
+            {% else %}
+              <span style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:#f4f4f4;border:1px solid var(--border);padding:3px 10px;display:inline-block;">None</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if user.created_at %}
+              {{ user.created_at.strftime('%b %d, %Y') }}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <div class="d-flex gap-2 justify-content-end flex-wrap">
+              {% if current_user and current_user.user_id != user.user_id %}
+              <form method="post" action="/admin/users/{{ user.user_id }}/toggle/" style="margin:0;">
+                <button type="submit" class="btn-outline-secondary" style="padding:8px 14px;">
+                  {% if user.is_active %}Deactivate{% else %}Reactivate{% endif %}
+                </button>
+              </form>
+              {% if user.seller_status == 'pending' %}
+              <form method="post" action="/admin/users/{{ user.user_id }}/approve-seller/" style="margin:0;">
+                <button type="submit" class="btn-outline-secondary" style="padding:8px 14px;">
+                  Approve Seller
+                </button>
+              </form>
+              {% elif user.role != 'seller' %}
+              <span style="font-size:.75rem;color:var(--muted);padding:8px 0;">No request</span>
+              {% endif %}
+              {% else %}
+                <span style="font-size:.75rem;color:var(--muted);">Current admin</span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:80px 20px;border:1px solid var(--border);background:var(--white);">
+    <i class="bi bi-people" aria-hidden="true" style="font-size:2.5rem;color:var(--muted-2);display:block;margin-bottom:16px;"></i>
+    <p style="color:var(--muted);margin:0;">No users found.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

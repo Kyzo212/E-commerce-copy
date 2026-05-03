@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.order_id }} — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:48px;padding-bottom:72px;max-width:640px;">
+
+  <nav aria-label="Breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/orders/">My Orders</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Order #{{ order.order_id }}</li>
+    </ol>
+  </nav>
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+    <div>
+      <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;color:var(--ink);margin-bottom:4px;">
+        Order #{{ order.order_id }}
+      </h1>
+      {% if order.created_at %}
+      <p style="font-size:.82rem;color:var(--muted);margin:0;">
+        Placed on {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+      </p>
+      {% endif %}
+    </div>
+    <div style="font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+      {% if order.status == 'pending' %}color:#7a6000;background:#fff8e1;border:1px solid #ffe082;
+      {% elif order.status == 'completed' %}color:var(--success);background:#f0faf4;border:1px solid #a7d7b8;
+      {% else %}color:var(--muted);background:var(--bg);border:1px solid var(--border);{% endif %}
+      padding:6px 14px;display:inline-block;">
+      {{ order.status|capitalize }}
+    </div>
+  </div>
+
+  <!-- Items -->
+  <div style="border:1px solid var(--border);margin-bottom:24px;">
+    <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px;">
+      <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);">
+        <i class="bi bi-bag me-2" aria-hidden="true"></i>Items
+      </span>
+    </div>
+    <div style="padding:0;">
+      {% for item in order.items %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;{% if not loop.last %}border-bottom:1px solid var(--border);{% endif %}">
+        <div>
+          <div style="font-size:.9rem;font-weight:500;color:var(--ink);">{{ item.product_name }}</div>
+          <div style="font-size:.78rem;color:var(--muted);">&#8369;{{ item.product_price|price }} × {{ item.quantity }}</div>
+        </div>
+        <div style="font-weight:700;font-size:.9rem;color:var(--ink);">
+          &#8369;{{ (item.product_price * item.quantity)|price }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Total -->
+  <div style="border:1px solid var(--border);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;">
+    <span style="font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);">Order Total</span>
+    <span style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.4rem;color:var(--ink);">&#8369;{{ order.total|price }}</span>
+  </div>
+
+  <div class="d-flex gap-3">
+    <a href="/orders/" class="btn-outline-ink">Back to Orders</a>
+    <a href="/products/" class="btn-ink">Shop More</a>
+  </div>
+
+</div>
+{% endblock %}

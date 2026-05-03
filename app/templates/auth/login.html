@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Sign In — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:420px;padding-top:72px;padding-bottom:72px;">
+
+  <div style="text-align:center;margin-bottom:36px;">
+    <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:2rem;color:var(--ink);margin-bottom:8px;">
+      Welcome back
+    </h1>
+    <p style="font-size:.88rem;color:var(--muted);">Sign in to your ShopLocal account</p>
+  </div>
+
+  {% if errors %}
+  <div class="alert-err mb-4" role="alert">
+    {% for e in errors %}<div>{{ e }}</div>{% endfor %}
+  </div>
+  {% endif %}
+
+  <form method="post" novalidate>
+
+    <div style="margin-bottom:16px;">
+      <label class="form-label" for="l-email">Email</label>
+      <input type="email" id="l-email" name="email" class="form-control"
+             value="{{ form.get('email', '') }}"
+             placeholder="you@example.com"
+             required aria-required="true" autocomplete="email">
+    </div>
+
+    <div style="margin-bottom:28px;">
+      <label class="form-label" for="l-pass">Password</label>
+      <input type="password" id="l-pass" name="password" class="form-control"
+             placeholder="••••••••"
+             required aria-required="true" autocomplete="current-password">
+    </div>
+
+    <button type="submit" class="btn-ink w-100" style="padding:14px;font-size:.82rem;cursor:pointer;">
+      Sign In
+    </button>
+
+  </form>
+
+  <div style="text-align:center;margin-top:24px;border-top:1px solid var(--border);padding-top:24px;">
+    <p style="font-size:.82rem;color:var(--muted);">
+      Don't have an account?
+      <a href="/register/" style="color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:3px;">Create one</a>
+    </p>
+  </div>
+
+</div>
+{% endblock %}

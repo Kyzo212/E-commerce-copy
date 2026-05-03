@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}ShopLocal{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section style="background:var(--bg);border-bottom:1px solid var(--border);padding:100px 0 80px;">
+  <div class="container text-center">
+    <p style="font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">
+      Free shipping on orders over ₱500
+    </p>
+    <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(2.8rem,7vw,5.5rem);line-height:1.05;color:var(--ink);margin-bottom:28px;letter-spacing:-.02em;">
+      Made to be worn.<br>Or judged. Or both.
+    </h1>
+    <p style="font-size:.95rem;color:var(--muted);max-width:460px;margin:0 auto 36px;line-height:1.7;">
+      Discover unique products from local sellers — curated, quality-checked, delivered fast.
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="/products/" class="btn-ink">Shop Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- Category filter -->
+{% if categories %}
+<section style="background:var(--bg);border-bottom:1px solid var(--border);padding:20px 0;">
+  <div class="container">
+    <div class="d-flex flex-wrap gap-2 justify-content-center">
+      <a href="/products/" class="cat-pill active">All</a>
+      {% for cat in categories %}
+      <a href="/products/?category={{ cat }}" class="cat-pill">{{ cat }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Featured products -->
+<section class="section">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-baseline mb-5">
+      <h2 class="section-title mb-0">New In</h2>
+      <a href="/products/" style="font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">
+        View All <i class="bi bi-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    {% if featured %}
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 g-4">
+      {% for p in featured %}
+      <div class="col">
+        <a href="/products/{{ p.product_id }}/" class="product-card">
+          <div class="card-img-wrap">
+            {% if p.product_image %}
+            <img src="{{ p.product_image }}" alt="{{ p.product_name }}" loading="lazy">
+            {% else %}
+            <div class="card-img-ph" style="aspect-ratio:3/4;">
+              <i class="bi bi-bag" style="font-size:2.5rem;" aria-hidden="true"></i>
+            </div>
+            {% endif %}
+          </div>
+          <div class="card-info">
+            {% if p.product_category %}<div class="card-cat">{{ p.product_category }}</div>{% endif %}
+            <div class="card-name">{{ p.product_name }}</div>
+            <div class="card-price">&#8369;{{ p.product_price|price }}</div>
+            {% if p.product_stock is not none and p.product_stock == 0 %}
+            <div style="font-size:.7rem;color:var(--muted);margin-top:2px;">Sold out</div>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div style="text-align:center;padding:80px 20px;border:1px solid var(--border);">
+      <i class="bi bi-bag" aria-hidden="true" style="font-size:2.5rem;color:var(--muted-2);display:block;margin-bottom:16px;"></i>
+      <p style="color:var(--muted);margin-bottom:20px;">No products yet.</p>
+      {% if current_user and current_user.is_admin %}
+      <a href="/products/create/" class="btn-ink">Add the First Product</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Editorial strip -->
+<section style="background:var(--ink);padding:56px 0;">
+  <div class="container text-center">
+    <p style="font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:12px;">
+      ShopLocal Promise
+    </p>
+    <h2 style="font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(1.5rem,4vw,2.5rem);color:var(--white);margin-bottom:32px;line-height:1.2;">
+      Local sellers. Real products.<br>No compromises.
+    </h2>
+    <div class="row g-4 justify-content-center" style="max-width:720px;margin:0 auto;">
+      <div class="col-md-4">
+        <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Delivery</div>
+        <div style="font-size:.92rem;color:var(--white);">Orders within 24h</div>
+      </div>
+      <div class="col-md-4">
+        <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Returns</div>
+        <div style="font-size:.92rem;color:var(--white);">30-day hassle-free</div>
+      </div>
+      <div class="col-md-4">
+        <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Payment</div>
+        <div style="font-size:.92rem;color:var(--white);">Secure checkout</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

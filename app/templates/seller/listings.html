@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}My Listings — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:48px;padding-bottom:72px;max-width:1100px;">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div>
+      <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.9rem;color:var(--ink);margin-bottom:6px;">
+        My Listings
+      </h1>
+      <p style="font-size:.85rem;color:var(--muted);margin:0;">Products you can manage as a seller.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="/products/create/" class="btn-ink">Add Product</a>
+      <a href="/products/" class="btn-outline-ink">Browse Shop</a>
+    </div>
+  </div>
+
+  {% if products %}
+  <div style="border:1px solid var(--border);background:var(--white);overflow:hidden;">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td style="font-weight:600;">
+            <a href="/products/{{ product.product_id }}/" style="color:var(--ink);text-decoration:none;">
+              {{ product.product_name }}
+            </a>
+          </td>
+          <td>{{ product.product_category or '-' }}</td>
+          <td>&#8369;{{ product.product_price|price }}</td>
+          <td>{{ product.product_stock or 0 }}</td>
+          <td class="text-end">
+            <a href="/products/{{ product.product_id }}/edit/" class="btn-outline-secondary" style="padding:8px 14px;">Edit</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:80px 20px;border:1px solid var(--border);background:var(--white);">
+    <i class="bi bi-bag-plus" aria-hidden="true" style="font-size:2.5rem;color:var(--muted-2);display:block;margin-bottom:16px;"></i>
+    <p style="color:var(--muted);margin-bottom:20px;">You don’t have any listings yet.</p>
+    <a href="/products/create/" class="btn-ink">Create Your First Listing</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block title %}{{ user.username }} — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:48px;padding-bottom:72px;max-width:860px;">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;gap:24px;margin-bottom:48px;padding-bottom:28px;border-bottom:1px solid var(--border);">
+    <!-- Avatar -->
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <span style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;color:var(--white);">
+        {{ user.username[0]|upper }}
+      </span>
+    </div>
+    <div>
+      <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;color:var(--ink);margin-bottom:4px;">
+        {{ user.username }}
+      </h1>
+      <p style="font-size:.82rem;color:var(--muted);margin:0;">{{ user.email }}</p>
+      {% if user.created_at %}
+      <p style="font-size:.75rem;color:var(--muted-2);margin:3px 0 0;">
+        Member since {{ user.created_at.strftime('%B %Y') }}
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Left column -->
+    <div class="col-lg-6">
+
+      <!-- Edit profile -->
+      <div style="border:1px solid var(--border);margin-bottom:24px;">
+        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px;">
+          <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);">
+            <i class="bi bi-person me-2" aria-hidden="true"></i>Edit Profile
+          </span>
+        </div>
+        <div style="padding:24px;">
+
+          {% if info_success %}
+          <div style="background:#f0faf4;border:1px solid #a7d7b8;color:#1a5e35;padding:12px 16px;font-size:.85rem;margin-bottom:16px;">
+            <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>Profile updated successfully.
+          </div>
+          {% endif %}
+
+          {% if info_errors %}
+          <div class="alert-err mb-4" role="alert">
+            {% for e in info_errors %}<div>{{ e }}</div>{% endfor %}
+          </div>
+          {% endif %}
+
+          <form method="post" action="/profile/" novalidate>
+            <div style="margin-bottom:14px;">
+              <label class="form-label" for="p-username">Username</label>
+              <input type="text" id="p-username" name="username" class="form-control"
+                     value="{{ user.username }}" required aria-required="true">
+            </div>
+            <div style="margin-bottom:20px;">
+              <label class="form-label" for="p-email">Email</label>
+              <input type="email" id="p-email" name="email" class="form-control"
+                     value="{{ user.email }}" required aria-required="true">
+            </div>
+            <button type="submit" class="btn-ink" style="padding:11px 24px;font-size:.78rem;cursor:pointer;">
+              Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Change password -->
+      <div style="border:1px solid var(--border);">
+        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px;">
+          <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);">
+            <i class="bi bi-lock me-2" aria-hidden="true"></i>Change Password
+          </span>
+        </div>
+        <div style="padding:24px;">
+
+          {% if pw_success %}
+          <div style="background:#f0faf4;border:1px solid #a7d7b8;color:#1a5e35;padding:12px 16px;font-size:.85rem;margin-bottom:16px;">
+            <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>Password changed successfully.
+          </div>
+          {% endif %}
+
+          {% if pw_errors %}
+          <div class="alert-err mb-4" role="alert">
+            {% for e in pw_errors %}<div>{{ e }}</div>{% endfor %}
+          </div>
+          {% endif %}
+
+          <form method="post" action="/profile/password/" novalidate>
+            <div style="margin-bottom:14px;">
+              <label class="form-label" for="pw-current">Current Password</label>
+              <input type="password" id="pw-current" name="current_password" class="form-control"
+                     placeholder="••••••••" required aria-required="true" autocomplete="current-password">
+            </div>
+            <div style="margin-bottom:14px;">
+              <label class="form-label" for="pw-new">New Password</label>
+              <input type="password" id="pw-new" name="new_password" class="form-control"
+                     placeholder="••••••••" required aria-required="true" autocomplete="new-password">
+            </div>
+            <div style="margin-bottom:20px;">
+              <label class="form-label" for="pw-confirm">Confirm New Password</label>
+              <input type="password" id="pw-confirm" name="confirm_password" class="form-control"
+                     placeholder="••••••••" required aria-required="true" autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn-outline-ink" style="padding:10px 24px;font-size:.78rem;cursor:pointer;">
+              Update Password
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right column: stats + actions -->
+    <div class="col-lg-6">
+
+      <!-- Account stats -->
+      <div style="border:1px solid var(--border);margin-bottom:24px;">
+        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px;">
+          <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);">
+            <i class="bi bi-bar-chart me-2" aria-hidden="true"></i>Account Overview
+          </span>
+        </div>
+        <div style="padding:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);">
+            <span style="font-size:.85rem;color:var(--ink-2);">Products in store</span>
+            <span style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--ink);">{{ product_count }}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);">
+            <span style="font-size:.85rem;color:var(--ink-2);">Items in bag</span>
+            <span style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--ink);">{{ cart_count or 0 }}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;">
+            <span style="font-size:.85rem;color:var(--ink-2);">Account status</span>
+            <span style="font-size:.75rem;font-weight:700;color:#1a7a4a;background:#f0faf4;border:1px solid #a7d7b8;padding:3px 10px;">Active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <div style="border:1px solid var(--border);">
+        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px;">
+          <span style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);">
+            <i class="bi bi-lightning me-2" aria-hidden="true"></i>Quick Actions
+          </span>
+        </div>
+        <div style="padding:0;">
+          {% if current_user and current_user.is_seller %}
+          <a href="/seller/listings/" style="display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--ink);font-size:.88rem;cursor:pointer;transition:background 200ms;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+            <span><i class="bi bi-bag-check me-2" aria-hidden="true" style="color:var(--muted);"></i>My listings</span>
+            <i class="bi bi-arrow-right" aria-hidden="true" style="color:var(--muted-2);font-size:.8rem;"></i>
+          </a>
+          <a href="/products/create/" style="display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--ink);font-size:.88rem;cursor:pointer;transition:background 200ms;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+            <span><i class="bi bi-plus-circle me-2" aria-hidden="true" style="color:var(--muted);"></i>List a product</span>
+            <i class="bi bi-arrow-right" aria-hidden="true" style="color:var(--muted-2);font-size:.8rem;"></i>
+          </a>
+          {% endif %}
+          {% if current_user and current_user.is_admin %}
+          <a href="/admin/orders/" style="display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--ink);font-size:.88rem;cursor:pointer;transition:background 200ms;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+            <span><i class="bi bi-shield-lock me-2" aria-hidden="true" style="color:var(--muted);"></i>Admin dashboard</span>
+            <i class="bi bi-arrow-right" aria-hidden="true" style="color:var(--muted-2);font-size:.8rem;"></i>
+          </a>
+          {% endif %}
+          <a href="/products/" style="display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--ink);font-size:.88rem;cursor:pointer;transition:background 200ms;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+            <span><i class="bi bi-grid me-2" aria-hidden="true" style="color:var(--muted);"></i>Browse shop</span>
+            <i class="bi bi-arrow-right" aria-hidden="true" style="color:var(--muted-2);font-size:.8rem;"></i>
+          </a>
+          <a href="/orders/" style="display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--ink);font-size:.88rem;cursor:pointer;transition:background 200ms;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+            <span><i class="bi bi-receipt me-2" aria-hidden="true" style="color:var(--muted);"></i>My orders</span>
+            <i class="bi bi-arrow-right" aria-hidden="true" style="color:var(--muted-2);font-size:.8rem;"></i>
+          </a>
+          <a href="/cart/" style="display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--ink);font-size:.88rem;cursor:pointer;transition:background 200ms;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+            <span><i class="bi bi-bag me-2" aria-hidden="true" style="color:var(--muted);"></i>View bag</span>
+            <i class="bi bi-arrow-right" aria-hidden="true" style="color:var(--muted-2);font-size:.8rem;"></i>
+          </a>
+          <div style="padding:15px 20px;">
+            <form method="post" action="/logout/" style="margin:0;">
+              <button type="submit" style="display:flex;align-items:center;gap:8px;background:none;border:none;color:var(--danger);font-size:.88rem;font-family:'Inter',sans-serif;cursor:pointer;padding:0;">
+                <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Sign Out
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

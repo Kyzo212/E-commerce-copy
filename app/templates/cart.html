@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Bag — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:40px;padding-bottom:56px;">
+
+  <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.75rem;color:var(--ink);margin-bottom:36px;border-bottom:1px solid var(--border);padding-bottom:20px;">
+    Your Bag {% if items %}<span style="font-family:'Inter',sans-serif;font-weight:400;font-size:1rem;color:var(--muted);">({{ items|length }} item{{ 's' if items|length != 1 }})</span>{% endif %}
+  </h1>
+
+  {% if items %}
+  <div class="row g-5">
+
+    <!-- Items -->
+    <div class="col-lg-7">
+      <form id="cart-update" method="post" action="/cart/update/" aria-label="Update cart"></form>
+
+      {% for item in items %}
+      <div class="d-flex gap-4 {% if not loop.last %}mb-4 pb-4{% endif %}"
+           style="{% if not loop.last %}border-bottom:1px solid var(--border);{% endif %}">
+
+        <!-- Thumb -->
+        <a href="/products/{{ item.product.product_id }}/"
+           style="width:100px;height:125px;flex-shrink:0;overflow:hidden;background:#eeeeee;display:block;cursor:pointer;"
+           aria-label="View {{ item.product.product_name }}">
+          {% if item.product.product_image %}
+          <img src="{{ item.product.product_image }}" alt="{{ item.product.product_name }}"
+               style="width:100%;height:100%;object-fit:cover;">
+          {% else %}
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted-2);" aria-hidden="true">
+            <i class="bi bi-bag" style="font-size:1.8rem;"></i>
+          </div>
+          {% endif %}
+        </a>
+
+        <!-- Info -->
+        <div style="flex:1;min-width:0;">
+          {% if item.product.product_category %}
+          <p style="font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">{{ item.product.product_category }}</p>
+          {% endif %}
+          <a href="/products/{{ item.product.product_id }}/"
+             style="font-size:.95rem;font-weight:500;color:var(--ink);text-decoration:none;display:block;margin-bottom:6px;cursor:pointer;">
+            {{ item.product.product_name }}
+          </a>
+          <p style="font-size:.88rem;color:var(--ink);margin-bottom:14px;">&#8369;{{ item.product.product_price|price }}</p>
+
+          <div class="d-flex align-items-center gap-3">
+            <label for="qty-{{ item.product.product_id }}" class="form-label" style="margin:0;font-size:.75rem;">Qty</label>
+            <input type="number"
+                   id="qty-{{ item.product.product_id }}"
+                   name="qty_{{ item.product.product_id }}"
+                   value="{{ item.quantity }}" min="0" max="99"
+                   form="cart-update"
+                   class="form-control text-center"
+                   style="width:68px;font-weight:600;">
+
+            <form method="post" action="/cart/remove/" style="margin:0;">
+              <input type="hidden" name="product_id" value="{{ item.product.product_id }}">
+              <button type="submit"
+                      style="background:none;border:none;font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:3px;"
+                      aria-label="Remove {{ item.product.product_name }}">
+                Remove
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Subtotal -->
+        <div style="flex-shrink:0;text-align:right;">
+          <span style="font-size:.92rem;font-weight:600;color:var(--ink);">&#8369;{{ item.subtotal|price }}</span>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div style="margin-top:20px;">
+        <button type="submit" form="cart-update"
+                class="btn-ghost" style="font-size:.72rem;cursor:pointer;">
+          <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i> Update Quantities
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="col-lg-5">
+      <div style="background:var(--bg);border:1px solid var(--border);padding:28px;">
+        <h2 style="font-family:'Playfair Display',serif;font-weight:600;font-size:1.1rem;color:var(--ink);margin-bottom:20px;">Order Summary</h2>
+
+        {% for item in items %}
+        <div class="d-flex justify-content-between mb-2" style="font-size:.82rem;">
+          <span style="color:var(--ink-2);">{{ item.product.product_name }} × {{ item.quantity }}</span>
+          <span style="font-weight:500;">&#8369;{{ item.subtotal|price }}</span>
+        </div>
+        {% endfor %}
+
+        <div style="border-top:1px solid var(--border);margin:16px 0;"></div>
+
+        <div class="d-flex justify-content-between align-items-baseline mb-5">
+          <span style="font-weight:700;font-size:.88rem;letter-spacing:.04em;text-transform:uppercase;">Total</span>
+          <span style="font-size:1.25rem;font-weight:700;color:var(--ink);">&#8369;{{ total|price }}</span>
+        </div>
+
+        <a href="/checkout/" class="btn-ink w-100 text-center d-block" style="margin-bottom:10px;">
+          Proceed to Checkout
+        </a>
+        <a href="/products/" class="btn-ghost w-100 text-center d-block">
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  {% else %}
+  <div style="text-align:center;padding:80px 20px;border:1px solid var(--border);">
+    <i class="bi bi-bag" aria-hidden="true" style="font-size:3rem;color:var(--muted-2);display:block;margin-bottom:20px;"></i>
+    <p style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--ink-2);margin-bottom:8px;">Your bag is empty</p>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:28px;">Add something you love.</p>
+    <a href="/products/" class="btn-ink">Browse Products</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

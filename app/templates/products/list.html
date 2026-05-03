@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{% if current_category %}{{ current_category }}{% else %}Shop All{% endif %} — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:40px;">
+
+  <!-- Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4" style="border-bottom:1px solid var(--border);padding-bottom:20px;">
+    <div>
+      <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;color:var(--ink);margin:0;">
+        {% if current_category %}{{ current_category }}{% else %}Shop All{% endif %}
+      </h1>
+      <p style="font-size:.72rem;color:var(--muted);margin:4px 0 0;letter-spacing:.04em;">{{ products|length }} product{{ 's' if products|length != 1 }}</p>
+    </div>
+
+    <form class="d-flex gap-2 w-100" method="get" action="/products/" role="search">
+      {% if current_category %}
+      <input type="hidden" name="category" value="{{ current_category }}">
+      {% endif %}
+      <input class="form-control flex-grow-1" type="search" name="search"
+             placeholder="Search…" value="{{ search }}"
+             aria-label="Search products">
+      <button class="btn-outline-ink flex-shrink-0" style="padding:10px 20px;font-size:.72rem;" aria-label="Submit search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+      </button>
+    </form>
+  </div>
+
+  <!-- Categories -->
+  <div class="d-flex flex-wrap gap-2 mb-5" role="list" aria-label="Filter by category">
+    <a href="/products/" class="cat-pill {% if not current_category %}active{% endif %}" role="listitem">All</a>
+    {% for cat in categories %}
+    <a href="/products/?{% if search %}search={{ search }}&{% endif %}category={{ cat }}"
+       class="cat-pill {% if current_category == cat %}active{% endif %}" role="listitem">
+      {{ cat }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Grid -->
+  {% if products %}
+  <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-4 g-4">
+    {% for p in products %}
+    <div class="col">
+      <a href="/products/{{ p.product_id }}/" class="product-card">
+        <div class="card-img-wrap">
+          {% if p.product_image %}
+          <img src="{{ p.product_image }}" alt="{{ p.product_name }}" loading="lazy">
+          {% else %}
+          <div class="card-img-ph" style="aspect-ratio:3/4;">
+            <i class="bi bi-bag" style="font-size:2.5rem;" aria-hidden="true"></i>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-info">
+          {% if p.product_category %}<div class="card-cat">{{ p.product_category }}</div>{% endif %}
+          <div class="card-name">{{ p.product_name }}</div>
+          <div class="card-price">&#8369;{{ p.product_price|price }}</div>
+          {% if p.product_stock is not none and p.product_stock == 0 %}
+          <div style="font-size:.7rem;color:var(--muted);margin-top:2px;">Sold out</div>
+          {% endif %}
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div style="text-align:center;padding:80px 20px;border:1px solid var(--border);">
+    <i class="bi bi-search" aria-hidden="true" style="font-size:2.5rem;color:var(--muted-2);display:block;margin-bottom:16px;"></i>
+    <p style="color:var(--muted);margin-bottom:20px;">No products found.</p>
+    <a href="/products/" class="btn-outline-ink">Clear Filters</a>
+  </div>
+  {% endif %}
+
+</div>
+<div style="padding-bottom:48px;"></div>
+{% endblock %}

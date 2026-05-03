@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Access Denied — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="max-width:480px;padding-top:96px;padding-bottom:56px;">
+  <p style="font-family:'Playfair Display',serif;font-size:6rem;font-weight:700;color:var(--border);line-height:1;margin-bottom:16px;" aria-hidden="true">403</p>
+  <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;color:var(--ink);margin-bottom:10px;">Access Denied</h1>
+  <p style="color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:36px;">You don't have permission to view this page. This area is for admins only.</p>
+  <div class="d-flex gap-3 justify-content-center">
+    <a href="/" class="btn-ink">Go Home</a>
+    <a href="/products/" class="btn-outline-ink">Browse Shop</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}My Orders — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:48px;padding-bottom:72px;max-width:720px;">
+
+  <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.8rem;color:var(--ink);margin-bottom:8px;">
+    My Orders
+  </h1>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:36px;">{{ orders|length }} order{{ 's' if orders|length != 1 }}</p>
+
+  {% if orders %}
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    {% for order in orders %}
+    <a href="/orders/{{ order.order_id }}/" style="text-decoration:none;color:var(--ink);border:1px solid var(--border);background:var(--white);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:border-color 200ms;" onmouseover="this.style.borderColor='var(--ink)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div>
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">
+          Order #{{ order.order_id }}
+        </div>
+        <div style="font-size:.88rem;color:var(--ink-2);">
+          {{ order.items|length }} item{{ 's' if order.items|length != 1 }}
+        </div>
+        {% if order.created_at %}
+        <div style="font-size:.75rem;color:var(--muted);margin-top:2px;">
+          {{ order.created_at.strftime('%B %d, %Y') }}
+        </div>
+        {% endif %}
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--ink);">
+          &#8369;{{ order.total|price }}
+        </div>
+        <div style="font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:4px;
+          {% if order.status == 'pending' %}color:#7a6000;background:#fff8e1;border:1px solid #ffe082;
+          {% elif order.status == 'completed' %}color:var(--success);background:#f0faf4;border:1px solid #a7d7b8;
+          {% else %}color:var(--muted);background:var(--bg);border:1px solid var(--border);{% endif %}
+          padding:3px 10px;display:inline-block;">
+          {{ order.status|capitalize }}
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div style="text-align:center;padding:80px 20px;border:1px solid var(--border);">
+    <i class="bi bi-bag-x" aria-hidden="true" style="font-size:2.5rem;color:var(--muted-2);display:block;margin-bottom:16px;"></i>
+    <p style="color:var(--muted);margin-bottom:20px;">You haven't placed any orders yet.</p>
+    <a href="/products/" class="btn-ink">Start Shopping</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

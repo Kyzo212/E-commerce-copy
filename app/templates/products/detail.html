@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}{{ product.product_name }} — ShopLocal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:32px;padding-bottom:56px;">
+
+  <nav aria-label="Breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/products/">Shop</a></li>
+      {% if product.product_category %}
+      <li class="breadcrumb-item"><a href="/products/?category={{ product.product_category }}">{{ product.product_category }}</a></li>
+      {% endif %}
+      <li class="breadcrumb-item active" aria-current="page">{{ product.product_name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-5">
+
+    <!-- Image -->
+    <div class="col-md-6">
+      <div style="background:#d9c9aa;overflow:hidden;aspect-ratio:1/1;">
+        {% if product.product_image %}
+        <img src="{{ product.product_image }}" alt="{{ product.product_name }}"
+             style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 400ms ease;"
+             onmouseover="this.style.transform='scale(1.04)'"
+             onmouseout="this.style.transform='scale(1)'">
+        {% else %}
+        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted-2);" aria-label="No image">
+          <i class="bi bi-bag" style="font-size:5rem;" aria-hidden="true"></i>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if current_user and current_user.is_admin %}
+      <div class="d-flex gap-2 mt-3">
+        <a href="/products/{{ product.product_id }}/edit/" class="btn-ghost flex-fill text-center"
+           style="flex:1;">
+          <i class="bi bi-pencil me-1" aria-hidden="true"></i> Edit
+        </a>
+        <form method="post" action="/products/{{ product.product_id }}/delete/" style="flex:1;"
+              onsubmit="return confirm('Delete this product? This cannot be undone.');">
+          <button type="submit" class="btn-outline-danger w-100"
+                  style="padding:10px 20px;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;">
+            <i class="bi bi-trash me-1" aria-hidden="true"></i> Delete
+          </button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Details -->
+    <div class="col-md-6">
+      {% if product.product_category %}
+      <p style="font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">
+        {{ product.product_category }}
+      </p>
+      {% endif %}
+
+      <h1 style="font-family:'Playfair Display',serif;font-weight:700;font-size:2rem;color:var(--ink);line-height:1.2;margin-bottom:14px;">
+        {{ product.product_name }}
+      </h1>
+
+      <p style="font-size:1.35rem;font-weight:600;color:var(--ink);margin-bottom:18px;">
+        &#8369;{{ product.product_price|price }}
+      </p>
+
+      {% if product.product_stock is not none %}
+      <div style="margin-bottom:20px;">
+        {% if product.product_stock > 0 %}
+        <span class="badge-stock-ok">
+          <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+          {{ product.product_stock }} in stock
+        </span>
+        {% else %}
+        <span class="badge-stock-out">
+          <i class="bi bi-x-circle" aria-hidden="true"></i>
+          Sold out
+        </span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if product.product_description %}
+      <p style="font-size:.92rem;color:var(--ink-2);line-height:1.8;margin-bottom:28px;border-top:1px solid var(--border);padding-top:20px;">
+        {{ product.product_description }}
+      </p>
+      {% endif %}
+
+      <!-- Add to cart -->
+      <form method="post" action="/cart/add/" style="border-top:1px solid var(--border);padding-top:24px;">
+        <input type="hidden" name="product_id" value="{{ product.product_id }}">
+        <input type="hidden" name="next" value="/cart/">
+        <div class="d-flex gap-3 align-items-center mb-3">
+          <div>
+            <label for="qty-input" class="form-label" style="margin-bottom:4px;">Qty</label>
+            <input type="number" id="qty-input" name="quantity"
+                   value="1" min="1" max="99"
+                   class="form-control text-center"
+                   style="width:76px;font-weight:700;"
+                   aria-label="Quantity">
+          </div>
+          <div style="flex:1;padding-top:22px;">
+            <button type="submit" class="btn-ink w-100" style="padding:14px;">
+              Add to Bag
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Meta -->
+      <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:8px;">
+        <div class="d-flex justify-content-between" style="font-size:.75rem;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">
+          <span>Delivery</span><span>Within 24 hours</span>
+        </div>
+        <div class="d-flex justify-content-between" style="font-size:.75rem;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);">
+          <span>Returns</span><span>30-day policy</span>
+        </div>
+        <div class="d-flex justify-content-between" style="font-size:.75rem;color:var(--muted);padding:8px 0;">
+          <span>Payment</span><span>Secure checkout</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related -->
+  {% if related %}
+  <div style="margin-top:64px;border-top:1px solid var(--border);padding-top:48px;">
+    <h2 style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.4rem;color:var(--ink);margin-bottom:32px;">
+      You May Also Like
+    </h2>
+    <div class="row row-cols-2 row-cols-md-4 g-4">
+      {% for p in related %}
+      <div class="col">
+        <a href="/products/{{ p.product_id }}/" class="product-card">
+          <div class="card-img-wrap">
+            {% if p.product_image %}
+            <img src="{{ p.product_image }}" alt="{{ p.product_name }}" loading="lazy">
+            {% else %}
+            <div class="card-img-ph" style="aspect-ratio:3/4;">
+              <i class="bi bi-bag" style="font-size:2rem;" aria-hidden="true"></i>
+            </div>
+            {% endif %}
+          </div>
+          <div class="card-info">
+            {% if p.product_category %}<div class="card-cat">{{ p.product_category }}</div>{% endif %}
+            <div class="card-name">{{ p.product_name }}</div>
+            <div class="card-price">&#8369;{{ p.product_price|price }}</div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
